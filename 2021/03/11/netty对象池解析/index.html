@@ -1,4 +1,160 @@
-<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><title>Netty对象池 | Jurly's Shell</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 5.4.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Netty对象池</h1><a id="logo" href="/.">Jurly's Shell</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/about/"><i class="fa fa-user"> About</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Netty对象池</h1><div class="post-meta">2021-03-11<span> | </span><span class="category"><a href="/categories/Netty/">Netty</a></span></div><div class="post-content"><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>当你看到这篇博客时候，说明你已经知道什么是对象池了，这儿就不啰嗦了。</p>
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前言当你看到这篇博客时候，说明你已经知道什么是对象池了，这儿就不啰嗦了。 对象池好处：  减少新建对象的损耗(可以看下new一个对象时候jvm里发生了什么) 减少GC频率  Netty作为一个高性能网络框架，作者对性能的追求在我看来也是达到了“变态”的级别，所以Netty也自然也实现了自己的对象池。这篇博客儿就浅入浅出的说下netty的对象池(不敢妄称深入哈哈哈)。 一、整体结构先上一个大体结构图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Netty对象池">
+<meta property="og:url" content="http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="Jurly&#39;s Shell">
+<meta property="og:description" content="前言当你看到这篇博客时候，说明你已经知道什么是对象池了，这儿就不啰嗦了。 对象池好处：  减少新建对象的损耗(可以看下new一个对象时候jvm里发生了什么) 减少GC频率  Netty作为一个高性能网络框架，作者对性能的追求在我看来也是达到了“变态”的级别，所以Netty也自然也实现了自己的对象池。这篇博客儿就浅入浅出的说下netty的对象池(不敢妄称深入哈哈哈)。 一、整体结构先上一个大体结构图">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://raw.githubusercontent.com/jurlyL/images/master/img/1615476744557-f88847ff-e775-4f1d-bd2d-6185ea7b4d3a.png?token=AKWAXQ33YPD6IYXXBILNWKDAJJDS4">
+<meta property="og:image" content="https://raw.githubusercontent.com/jurlyL/images/master/img/1615395703629-b8074049-b5c5-4e88-86fa-8739d207909a.png?token=AKWAXQ3JGEQYFPJPD77MKQLAJJDVC">
+<meta property="og:image" content="https://raw.githubusercontent.com/jurlyL/images/master/img/1615465354440-e19fadd4-b169-4414-a8a2-a1a46f826c38.png?token=AKWAXQ6OXBOGMNJY52DEUXTAJJDXW">
+<meta property="og:image" content="https://raw.githubusercontent.com/jurlyL/images/master/img/1615469863592-aa55ad22-8c2f-4d6d-b53e-84113e147034.png?token=AKWAXQYU6ATBRALNLQRCTLDAJJD2E">
+<meta property="og:image" content="https://raw.githubusercontent.com/jurlyL/images/master/img/1615470401848-1c779110-2928-44f5-ba2c-9f6cb43ca637.png?token=AKWAXQYS2MSQ3KI7TVHKNULAJJD3S">
+<meta property="og:image" content="https://raw.githubusercontent.com/jurlyL/images/master/img/1615476761452-5d49235d-d5da-4d66-9079-c92669a07185.png?token=AKWAXQ2DWNUTHN72YGNIVCDAJJD62">
+<meta property="article:published_time" content="2021-03-11T15:37:40.000Z">
+<meta property="article:modified_time" content="2021-03-12T12:06:57.693Z">
+<meta property="article:author" content="jurly">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/jurlyL/images/master/img/1615476744557-f88847ff-e775-4f1d-bd2d-6185ea7b4d3a.png?token=AKWAXQ33YPD6IYXXBILNWKDAJJDS4">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Netty对象池</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/jurlyL">Projects</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&text=Netty对象池"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&title=Netty对象池"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&is_video=false&description=Netty对象池"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Netty对象池&body=Check out this article: http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&title=Netty对象池"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&title=Netty对象池"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&title=Netty对象池"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&title=Netty对象池"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&name=Netty对象池&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&t=Netty对象池"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">一、整体结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">二、源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 获取对象</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9B%9E%E6%94%B6%E5%AF%B9%E8%B1%A1"><span class="toc-number">4.</span> <span class="toc-text">2.2 回收对象</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-1-%E5%90%8C%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">4.0.1.</span> <span class="toc-text">2.2.1  同线程回收</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-2-%E5%BC%82%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">4.0.2.</span> <span class="toc-text">2.2.2 异线程回收</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-%E6%8A%8A%E5%AF%B9%E8%B1%A1%E4%BB%8EWeakOrderQueue%E8%BD%AC%E7%A7%BB%E5%88%B0Stack"><span class="toc-number">4.1.</span> <span class="toc-text">2.3 把对象从WeakOrderQueue转移到Stack</span></a></li></ol></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Netty对象池
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">jurly</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2021-03-11T15:37:40.000Z" itemprop="datePublished">2021-03-11</time>
+        
+      
+    </div>
+
+
+      
+    <div class="article-category">
+        <i class="fas fa-archive"></i>
+        <a class="category-link" href="/categories/Netty/">Netty</a>
+    </div>
+
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>当你看到这篇博客时候，说明你已经知道什么是对象池了，这儿就不啰嗦了。</p>
 <p>对象池好处：</p>
 <ul>
 <li>减少新建对象的损耗(可以看下new一个对象时候jvm里发生了什么)</li>
@@ -126,5 +282,145 @@
 <p>代码中的注释已经比较详细了，这段的主要代码都是在操作weakOrderQueue链表，这儿就不多啰嗦了。负责把weakOrderQueue中的handle转移到stack底层的elements数组中的方法是WeakOrderQueue.transfer(Stack stack)。这个方法底层就是操作queue里的Link链表，然后把Link里的handle对象复制到Stack底层的elements数组中，代码就不贴了，可以自己去netty源码里看看。</p>
 <p>最后再看看这个图，加深下印象~</p>
 <p><img src="https://raw.githubusercontent.com/jurlyL/images/master/img/1615476761452-5d49235d-d5da-4d66-9079-c92669a07185.png?token=AKWAXQ2DWNUTHN72YGNIVCDAJJD62" alt="1615476761452-5d49235d-d5da-4d66-9079-c92669a07185"></p>
+<p>总结一下，Netty对象池其实底层就俩数据结构，之所以设计两个数据结构，是为了减少线程之间的竞争，提高性能。一个是Stack，由于是线程的本地变量，所以线程回收对象时候并不会产生竞争。另一个是WeakOrderQueue，用于异线程之间回收对象，其底层是链表，修改链表时候只要锁住链表头部就行。</p>
 <p>如果有错误的地方请指正~</p>
-</div><div class="post-copyright"><script type="text/javascript" src="/js/copyright.js" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="/css/copyright.css"><p><span>Title: </span>Netty对象池</p><p><span>Author: </span>jurly</p><p><span>Date: </span>2021-03-11</p><p><span>Last Update: </span>2021-03-12</p><p><span>Blog Link: </span><a href="/2021/03/11/netty对象池解析/">http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/</a><span class="copy-path"><i class="fa fa-clipboard" data-clipboard-text="http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/"></i></span></p><p><span>Copyright Declaration: </span>The author owns the copyright. Please indicate the source reproduced!</p></div><br><div class="tags"></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://example.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Netty/">Netty</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/">Netty对象池</a></li></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2021 <a href="/." rel="nofollow">Jurly's Shell.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/love.js"></script><script type="text/javascript" src="/js/copycode.js" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/jurlyL">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">一、整体结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">二、源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 获取对象</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9B%9E%E6%94%B6%E5%AF%B9%E8%B1%A1"><span class="toc-number">4.</span> <span class="toc-text">2.2 回收对象</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-1-%E5%90%8C%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">4.0.1.</span> <span class="toc-text">2.2.1  同线程回收</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-2-%E5%BC%82%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">4.0.2.</span> <span class="toc-text">2.2.2 异线程回收</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-%E6%8A%8A%E5%AF%B9%E8%B1%A1%E4%BB%8EWeakOrderQueue%E8%BD%AC%E7%A7%BB%E5%88%B0Stack"><span class="toc-number">4.1.</span> <span class="toc-text">2.3 把对象从WeakOrderQueue转移到Stack</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&text=Netty对象池"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&title=Netty对象池"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&is_video=false&description=Netty对象池"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Netty对象池&body=Check out this article: http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&title=Netty对象池"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&title=Netty对象池"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&title=Netty对象池"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&title=Netty对象池"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&name=Netty对象池&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2021/03/11/netty%E5%AF%B9%E8%B1%A1%E6%B1%A0%E8%A7%A3%E6%9E%90/&t=Netty对象池"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2020-2021
+    jurly
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="https://github.com/jurlyL">Projects</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
