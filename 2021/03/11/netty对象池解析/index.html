@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/jurlyL/images/master/img/1615470401848-1c779110-2928-44f5-ba2c-9f6cb43ca637.png?token=AKWAXQYS2MSQ3KI7TVHKNULAJJD3S">
 <meta property="og:image" content="https://raw.githubusercontent.com/jurlyL/images/master/img/1615476761452-5d49235d-d5da-4d66-9079-c92669a07185.png?token=AKWAXQ2DWNUTHN72YGNIVCDAJJD62">
 <meta property="article:published_time" content="2021-03-11T15:37:40.000Z">
-<meta property="article:modified_time" content="2021-03-12T12:06:57.693Z">
+<meta property="article:modified_time" content="2021-03-12T12:14:17.371Z">
 <meta property="article:author" content="jurly">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/jurlyL/images/master/img/1615476744557-f88847ff-e775-4f1d-bd2d-6185ea7b4d3a.png?token=AKWAXQ33YPD6IYXXBILNWKDAJJDS4">
@@ -110,7 +110,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">一、整体结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">二、源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 获取对象</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9B%9E%E6%94%B6%E5%AF%B9%E8%B1%A1"><span class="toc-number">4.</span> <span class="toc-text">2.2 回收对象</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-1-%E5%90%8C%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">4.0.1.</span> <span class="toc-text">2.2.1  同线程回收</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-2-%E5%BC%82%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">4.0.2.</span> <span class="toc-text">2.2.2 异线程回收</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-%E6%8A%8A%E5%AF%B9%E8%B1%A1%E4%BB%8EWeakOrderQueue%E8%BD%AC%E7%A7%BB%E5%88%B0Stack"><span class="toc-number">4.1.</span> <span class="toc-text">2.3 把对象从WeakOrderQueue转移到Stack</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">一、整体结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">二、源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 获取对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9B%9E%E6%94%B6%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 回收对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-%E5%90%8C%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">3.3.</span> <span class="toc-text">2.2.1  同线程回收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-2-%E5%BC%82%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">3.4.</span> <span class="toc-text">2.2.2 异线程回收</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-%E6%8A%8A%E5%AF%B9%E8%B1%A1%E4%BB%8EWeakOrderQueue%E8%BD%AC%E7%A7%BB%E5%88%B0Stack"><span class="toc-number">3.4.1.</span> <span class="toc-text">### 2.3 把对象从WeakOrderQueue转移到Stack</span></a></li></ol></li></ol></li></ol>
     </div>
   </span>
 </div>
@@ -154,14 +154,14 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>当你看到这篇博客时候，说明你已经知道什么是对象池了，这儿就不啰嗦了。</p>
+    <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>当你看到这篇博客时候，说明你已经知道什么是对象池了，这儿就不啰嗦了。</p>
 <p>对象池好处：</p>
 <ul>
 <li>减少新建对象的损耗(可以看下new一个对象时候jvm里发生了什么)</li>
 <li>减少GC频率</li>
 </ul>
 <p>Netty作为一个高性能网络框架，作者对性能的追求在我看来也是达到了“变态”的级别，所以Netty也自然也实现了自己的对象池。这篇博客儿就浅入浅出的说下netty的对象池(不敢妄称深入哈哈哈)。</p>
-<h3 id="一、整体结构"><a href="#一、整体结构" class="headerlink" title="一、整体结构"></a>一、整体结构</h3><p>先上一个大体结构图，这段有个印象就行，不必纠结是否看懂，下面结合源码详细的来分析，然后再回来看。</p>
+<h2 id="一、整体结构"><a href="#一、整体结构" class="headerlink" title="一、整体结构"></a>一、整体结构</h2><p>先上一个大体结构图，这段有个印象就行，不必纠结是否看懂，下面结合源码详细的来分析，然后再回来看。</p>
 <p><img src="https://raw.githubusercontent.com/jurlyL/images/master/img/1615476744557-f88847ff-e775-4f1d-bd2d-6185ea7b4d3a.png?token=AKWAXQ33YPD6IYXXBILNWKDAJJDS4" alt="1615476744557-f88847ff-e775-4f1d-bd2d-6185ea7b4d3a"></p>
 <p>图中的各个组件：</p>
 <p><strong>Stack:</strong> netty自己实现的一个栈，是<strong>线程的本地变量</strong>，用于存放stack所属线程回收的对象(包装过的)。比如Stack1是线程1的本地变量，那么线程1回收的对象就存放在Stack中。Stack主要结构如下：</p>
@@ -175,7 +175,7 @@
 <li><strong>LINK</strong>：weakOrderQueue底层是Link链表，link底层是一个handle[]数组。</li>
 <li><strong>HEAD</strong>：特殊的头节点，底层是一个handle。</li>
 </ul>
-<h3 id="二、源码分析"><a href="#二、源码分析" class="headerlink" title="二、源码分析"></a>二、源码分析</h3><p>Netty的对象池封装在Recycler这个抽象类里。netty的doc。</p>
+<h2 id="二、源码分析"><a href="#二、源码分析" class="headerlink" title="二、源码分析"></a>二、源码分析</h2><p>Netty的对象池封装在Recycler这个抽象类里。netty的doc。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Light-weight object pool based on a thread-local stack</span><br></pre></td></tr></table></figure>
 
 <p>基于线程本地栈的轻量级线程池。这个类结构如下：</p>
@@ -191,7 +191,7 @@
 <li>WeakOrderQueue</li>
 </ul>
 <p>对这个类有个整体的印象后，就开始往下看源码吧~</p>
-<h4 id="2-1-获取对象"><a href="#2-1-获取对象" class="headerlink" title="2.1 获取对象"></a>2.1 获取对象</h4><p>Recycler里获取对象方法如下：</p>
+<h3 id="2-1-获取对象"><a href="#2-1-获取对象" class="headerlink" title="2.1 获取对象"></a>2.1 获取对象</h3><p>Recycler里获取对象方法如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public final T get() &#123;</span><br><span class="line">        &#x2F;&#x2F;maxCapacityPerThread为0时候，代表不允许对对象进行回收</span><br><span class="line">        &#x2F;&#x2F;创建一个对象，其Recycler.Handle&lt;User&gt; handle属性为NOOP_HANDLE，该对象的recycle(Object object)不做任何事情，即不做回收</span><br><span class="line">        if (maxCapacityPerThread &#x3D;&#x3D; 0) &#123;</span><br><span class="line">            &#x2F;&#x2F;NOOP_HADNLE是一个不会进行回收的handle</span><br><span class="line">            return newObject((Handle&lt;T&gt;) NOOP_HANDLE);</span><br><span class="line">        &#125;</span><br><span class="line">        &#x2F;&#x2F;拿到当前线程的FastThreadLocal中的Stack</span><br><span class="line">        Stack&lt;T&gt; stack &#x3D; threadLocal.get();</span><br><span class="line">        &#x2F;&#x2F;从stack中弹出一个handle</span><br><span class="line">        DefaultHandle&lt;T&gt; handle &#x3D; stack.pop();</span><br><span class="line">        &#x2F;&#x2F;如果handle为空就new一个对象返回，否则就直接把handle持有的value，也就是真正的对象给返回</span><br><span class="line">        if (handle &#x3D;&#x3D; null) &#123;</span><br><span class="line">            handle &#x3D; stack.newHandle();</span><br><span class="line">            handle.value &#x3D; newObject(handle);</span><br><span class="line">        &#125;</span><br><span class="line">        return (T) handle.value;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
 <p>handle是Recyler中的一个内部接口，它只有一个实现，<strong>DefaultHandle</strong>类，下文中的所有handle指得都是DefaultHandle。DefaultHandle包装了真正对象，便于对对象进行回收。它内部持有一个value成员变量，这个value就是对象池中真正的对象，recycle方法就是回收对象的方法。<strong>注意，DefaultHandle的构造方法是必须传一个Stack对象进去的！！！这就意味着，每个Handle对象都和一个Stack进行了绑定，Handle是被哪个线程创建的，就和哪个线程的Stack进行绑定</strong>。其结构如下：</p>
@@ -236,7 +236,7 @@
 <p>2）如果是，就调用pushNow(item)方法。这个方法是Stack绑定的线程来回收对象如何处理。</p>
 <p>3）如果不是，就调用pushLater(item)方法。这个方法是非Stack绑定的线程来回收对象如何处理。</p>
 <p>接下来就详细分析这俩方法。</p>
-<h5 id="2-2-1-同线程回收"><a href="#2-2-1-同线程回收" class="headerlink" title="2.2.1  同线程回收"></a>2.2.1  同线程回收</h5><p>同线程回收指的是和Stack绑定的线程来调用stack.push()方法进行对象回收。上面说了，同线程回收的方法是pushNow()，我们来看看源码：</p>
+<h3 id="2-2-1-同线程回收"><a href="#2-2-1-同线程回收" class="headerlink" title="2.2.1  同线程回收"></a>2.2.1  同线程回收</h3><p>同线程回收指的是和Stack绑定的线程来调用stack.push()方法进行对象回收。上面说了，同线程回收的方法是pushNow()，我们来看看源码：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">private void pushNow(DefaultHandle&lt;?&gt; item) &#123;</span><br><span class="line">            &#x2F;&#x2F;判断Item是否已经被回收过</span><br><span class="line">            if (item.recycleId !&#x3D; 0 || !item.compareAndSetLastRecycledId(0, OWN_THREAD_ID)) &#123;</span><br><span class="line">                throw new IllegalStateException(&quot;recycled already&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            item.recycleId &#x3D; OWN_THREAD_ID;</span><br><span class="line"></span><br><span class="line">            int size &#x3D; this.size;</span><br><span class="line">            &#x2F;&#x2F;判断当前对象是否可以进行回收</span><br><span class="line">            if (size &gt;&#x3D; maxCapacity || dropHandle(item)) &#123;</span><br><span class="line">                &#x2F;&#x2F; Hit the maximum capacity or should drop - drop the possibly youngest object.</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line">            if (size &#x3D;&#x3D; elements.length) &#123;</span><br><span class="line">                elements &#x3D; Arrays.copyOf(elements, min(size &lt;&lt; 1, maxCapacity));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            elements[size] &#x3D; item;</span><br><span class="line">            this.size &#x3D; size + 1;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
 
 <p>这个方法主要步骤如下：</p>
@@ -245,7 +245,7 @@
 <p>3)如果当前Stack底层的elements数组已经满了，就扩容。扩容倍数是2倍，但需要判断是否到达最大容量。</p>
 <p>4）把item梵高elements数组中，再把stack的size+1。</p>
 <p>同线程回收的情况是比较简单的。就是简单的压栈。</p>
-<h5 id="2-2-2-异线程回收"><a href="#2-2-2-异线程回收" class="headerlink" title="2.2.2 异线程回收"></a>2.2.2 异线程回收</h5><p>首先，回收指的是回收DefaultHandle，handle中包含真正的对象。然后，每个handle绑定了一个stack，而每个stack又绑定了一个线程。异线程回收的意思就是，不是由handle绑定的stack所绑定的线程来对这个handle进行回收！！！（甚至像绕口令）</p>
+<h3 id="2-2-2-异线程回收"><a href="#2-2-2-异线程回收" class="headerlink" title="2.2.2 异线程回收"></a>2.2.2 异线程回收</h3><p>首先，回收指的是回收DefaultHandle，handle中包含真正的对象。然后，每个handle绑定了一个stack，而每个stack又绑定了一个线程。异线程回收的意思就是，不是由handle绑定的stack所绑定的线程来对这个handle进行回收！！！（甚至像绕口令）</p>
 <p>在看pushLator这个方法之前我们先看一个类。WeakOrderQueue。它的结构如下：</p>
 <p><img src="https://raw.githubusercontent.com/jurlyL/images/master/img/1615469863592-aa55ad22-8c2f-4d6d-b53e-84113e147034.png?token=AKWAXQYU6ATBRALNLQRCTLDAJJD2E" alt="1615469863592-aa55ad22-8c2f-4d6d-b53e-84113e147034"></p>
 <p>首先可以看到，它的构造函数中传入了一个stack，所以，<strong>每个WeakOrderQueue其实是绑定了一个Stack的</strong>。</p>
@@ -269,7 +269,7 @@
 <p>5）如果不为空，且queue不是WeakOrderQueue.DUMMY，就把需要回收的handle放到queue中。</p>
 <p>queue.add()方法就不贴出来了，就是weakOrderQueue底层的一些数据结构的操作。</p>
 <p>到这儿，就把同线程和异线程回收对象说完了。上面还有个坑没填，那就是如何<strong>scavenge()方法</strong>怎么把被其他线程回收的对象转移到当前stack。</p>
-<h4 id="2-3-把对象从WeakOrderQueue转移到Stack"><a href="#2-3-把对象从WeakOrderQueue转移到Stack" class="headerlink" title="2.3 把对象从WeakOrderQueue转移到Stack"></a>2.3 把对象从WeakOrderQueue转移到Stack</h4><p>在说这段以前，先看看Stack这个类的中的三个成员变量：</p>
+<h4 id="2-3-把对象从WeakOrderQueue转移到Stack"><a href="#2-3-把对象从WeakOrderQueue转移到Stack" class="headerlink" title="### 2.3 把对象从WeakOrderQueue转移到Stack"></a>### 2.3 把对象从WeakOrderQueue转移到Stack</h4><p>在说这段以前，先看看Stack这个类的中的三个成员变量：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">private WeakOrderQueue cursor, prev;</span><br><span class="line">private volatile WeakOrderQueue head;</span><br></pre></td></tr></table></figure>
 
 <p>cursor表示当前操作的weakOrderQueue，prev是cursor的前一个queue。由于维护weakOrderQueue链表是头插的方式，所以还需要一个head头节点。</p>
@@ -309,7 +309,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">一、整体结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">二、源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 获取对象</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9B%9E%E6%94%B6%E5%AF%B9%E8%B1%A1"><span class="toc-number">4.</span> <span class="toc-text">2.2 回收对象</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-1-%E5%90%8C%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">4.0.1.</span> <span class="toc-text">2.2.1  同线程回收</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-2-2-%E5%BC%82%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">4.0.2.</span> <span class="toc-text">2.2.2 异线程回收</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-%E6%8A%8A%E5%AF%B9%E8%B1%A1%E4%BB%8EWeakOrderQueue%E8%BD%AC%E7%A7%BB%E5%88%B0Stack"><span class="toc-number">4.1.</span> <span class="toc-text">2.3 把对象从WeakOrderQueue转移到Stack</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">2.</span> <span class="toc-text">一、整体结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">二、源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 获取对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9B%9E%E6%94%B6%E5%AF%B9%E8%B1%A1"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 回收对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-%E5%90%8C%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">3.3.</span> <span class="toc-text">2.2.1  同线程回收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-2-%E5%BC%82%E7%BA%BF%E7%A8%8B%E5%9B%9E%E6%94%B6"><span class="toc-number">3.4.</span> <span class="toc-text">2.2.2 异线程回收</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-%E6%8A%8A%E5%AF%B9%E8%B1%A1%E4%BB%8EWeakOrderQueue%E8%BD%AC%E7%A7%BB%E5%88%B0Stack"><span class="toc-number">3.4.1.</span> <span class="toc-text">### 2.3 把对象从WeakOrderQueue转移到Stack</span></a></li></ol></li></ol></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
